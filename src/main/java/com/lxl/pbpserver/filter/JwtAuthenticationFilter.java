@@ -41,6 +41,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 	private AuthenticationFailureHandler failureHandler = new SimpleUrlAuthenticationFailureHandler();
 
 	public JwtAuthenticationFilter() {
+		//拦截header中带Authorization的请求
 		this.requiresAuthenticationRequestMatcher = new RequestHeaderRequestMatcher("Authorization");
 	}
 	
@@ -59,6 +60,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
+		//header没带token的，直接放过，因为部分url匿名用户也可以访问
+		//如果需要不支持匿名用户的请求没带token，这里放过也没问题，因为SecurityContext中没有认证信息，后面会被权限控制模块拦截
 		if (!requiresAuthentication(request, response)) {
 			filterChain.doFilter(request, response);
 			return;
@@ -66,11 +69,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 		Authentication authResult = null;
 		AuthenticationException failed = null;
 		try {
+			//从头中获取token并封装后提交给AuthenticationManager
 			String token = getJwtToken(request);
 			if(StringUtils.isNotBlank(token)) {
 				JwtAuthenticationToken authToken = new JwtAuthenticationToken(JWT.decode(token));
 			    authResult = this.getAuthenticationManager().authenticate(authToken);
 			} else {
+				//如果token长度为0
 				failed = new InsufficientAuthenticationException("JWT is Empty");
 			}
 		} catch(JWTDecodeException e) {
@@ -86,8 +91,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 			failed = e;
 		}
 		if(authResult != null) {
+			//token认证成功
 		    successfulAuthentication(request, response, filterChain, authResult);
 		} else if(!permissiveRequest(request)){
+			//token认证失败，并且这个request不在例外列表里，才会返回错误
 			unsuccessfulAuthentication(request, response, failed);
 			return;
 		}
