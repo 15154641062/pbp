@@ -13,7 +13,7 @@ public class TokenClearLogoutHandler implements LogoutHandler {
 	
 	private JwtUserDetailsService jwtUserDetailsService;
 	
-	public TokenClearLogoutHandler(JwtUserDetailsService jwtUserService) {
+	public TokenClearLogoutHandler(JwtUserDetailsService jwtUserDetailsService) {
 		this.jwtUserDetailsService = jwtUserDetailsService;
 	}
 

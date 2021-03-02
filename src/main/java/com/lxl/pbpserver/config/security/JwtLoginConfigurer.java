@@ -23,8 +23,6 @@ public class JwtLoginConfigurer<T extends JwtLoginConfigurer<T, B>, B extends Ht
 		authFilter.setAuthenticationManager(http.getSharedObject(AuthenticationManager.class));
 		//设置失败的Handler
 		authFilter.setAuthenticationFailureHandler(new HttpStatusLoginFailureHandler());
-		//不将认证后的context放入session
-		//authFilter.setSessionAuthenticationStrategy(new NullAuthenticatedSessionStrategy());
 
 		//对手动new出来的authFilter对象进行后置处理，将对象注入到容器中
 		JwtAuthenticationFilter filter = postProcess(authFilter);

@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -38,6 +39,7 @@ public class JwtUserDetailsService implements UserDetailsService {
          * @todo 将salt保存到数据库或者缓存中
          * redisTemplate.opsForValue().set("token:"+username, salt, 3600, TimeUnit.SECONDS);
          */
+        BCrypt.gensalt();
         Algorithm algorithm = Algorithm.HMAC256(salt);
         Date date = new Date(System.currentTimeMillis()+3600*1000);  //设置1小时后过期
         return JWT.create()
@@ -53,7 +55,7 @@ public class JwtUserDetailsService implements UserDetailsService {
     }
 
     public void createUser(String username, String password) {
-        String encryptPwd = passwordEncoder.encode(password);
+        String encryptPwd = passwordEncoder.encode(password);      //对密码进行加密
         /**
          * @todo 保存用户名和加密后密码到数据库
          */

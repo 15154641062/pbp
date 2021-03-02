@@ -29,33 +29,43 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
-		        .antMatchers("/image/**").permitAll()
-		        .antMatchers("/admin/**").hasAnyRole("ADMIN")
-		        .antMatchers("/article/**").hasRole("USER")
-		        .anyRequest().authenticated()
+		        .antMatchers("/image/**").permitAll()	//静态资源访问无需认证
+		        .antMatchers("/admin/**").hasAnyRole("ADMIN")		//admin开头的请求，需要admin角色权限
+		        .antMatchers("/article/**").hasRole("USER")		//需登陆才能访问的url
+		        .anyRequest().authenticated()		//默认其它的请求都需要认证
 		        .and()
-		    .csrf().disable()
-		    .formLogin().disable()
-		    .sessionManagement().disable()
-		    .cors()
+		    .csrf().disable()		 //CSRF禁用，因为不使用session
+			.sessionManagement().disable()		//禁用session
+		    .formLogin().disable()		//禁用form登录
+		    .cors()		 //支持跨域
 		    .and()
+				//添加header设置，支持跨域和ajax请求
 		    .headers().addHeaderWriter(new StaticHeadersWriter(Arrays.asList(
 		    		new Header("Access-control-Allow-Origin","*"),
 		    		new Header("Access-Control-Expose-Headers","Authorization"))))
 		    .and()
+				//拦截OPTIONS请求，直接返回header
 		    .addFilterAfter(new OptionsRequestFilter(), CorsFilter.class)
+				//添加登录filter
 		    .apply(new JsonLoginConfigurer<>()).loginSuccessHandler(jsonLoginSuccessHandler())
 		    .and()
+				//添加token的filter
 		    .apply(new JwtLoginConfigurer<>()).tokenValidSuccessHandler(jwtRefreshSuccessHandler()).permissiveRequestUrls("/logout")
 		    .and()
+				//使用默认的logoutFilter
 		    .logout()
 //		        .logoutUrl("/logout")   //默认就是"/logout"
-		        .addLogoutHandler(tokenClearLogoutHandler())
-		        .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler())
+		        .addLogoutHandler(tokenClearLogoutHandler())		 //logout时清除token
+		        .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler())		//logout成功后返回200
 		    .and()
 		    .sessionManagement().disable();
 	}
-	
+
+	/**
+	 * 配置provider
+	 * @param auth
+	 * @throws Exception
+	 */
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.authenticationProvider(daoAuthenticationProvider()).authenticationProvider(jwtAuthenticationProvider());
@@ -103,7 +113,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 	protected TokenClearLogoutHandler tokenClearLogoutHandler() {
 		return new TokenClearLogoutHandler(jwtUserService());
 	}
-	
+
+	/**
+	 * 前后端分离的项目需要支持跨域请求，需要在HttpSecurity配置中启用cors支持
+	 * 在配置中开启http.cors()后
+	 * spring security就会从CorsConfigurationSource中取跨域配置，所以我们需要定义如下这样一个Bean
+	 * @return
+	 */
 	@Bean
 	protected CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
