@@ -1,9 +1,9 @@
 package com.lxl.pbpserver.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.lxl.pbpserver.pojo.AccountRoleDO;
+import com.lxl.pbpserver.pojo.UserRoleDO;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface AccountRoleMapper extends BaseMapper<AccountRoleDO> {
+public interface UserRoleMapper extends BaseMapper<UserRoleDO> {
 }

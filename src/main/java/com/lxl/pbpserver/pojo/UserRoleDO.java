@@ -8,18 +8,18 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
-@TableName("t_role")
-public class RoleDO {
+@TableName("t_user_role")
+public class UserRoleDO {
+
     @TableId(type = IdType.AUTO)
     private Long id;
 
-    private String sign;
+    private Long userId;
 
-    private String name;
-
-    private String remark;
+    private Long roleId;
 
     private Date gmtCreate;
 
     private Date gmtModified;
+
 }

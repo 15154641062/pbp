@@ -1,91 +1,40 @@
 package com.lxl.pbpserver.pojo;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
 
 import java.util.Date;
 
-@TableName("user_info")
+@Data
+@TableName("t_user_info")
 public class UserInfoDO {
-    @TableId(type = IdType.ID_WORKER)
-    private Long userId;
+    @TableId(type = IdType.AUTO)
+    private Long id;
 
-    private String userPetName;
+    @TableField(value = "login_name")
+    private String loginName;
 
-    private String userHeadImage;
+    private String loginPwd;
 
-    private Integer userPhone;
+    private String petName;
 
-    private String userMsg;
+    private String imageUrl;
 
-    private Integer enable;
+    private Integer phone;
+
+    private Date birthday;
+
+    private String email;
+
+    private String remark;
+
+    private Integer deleted;
 
     private Date gmtCreate;
 
     private Date gmtModified;
 
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public String getUserPetName() {
-        return userPetName;
-    }
-
-    public void setUserPetName(String userPetName) {
-        this.userPetName = userPetName;
-    }
-
-    public String getUserHeadImage() {
-        return userHeadImage;
-    }
-
-    public void setUserHeadImage(String userHeadImage) {
-        this.userHeadImage = userHeadImage;
-    }
-
-    public Integer getUserPhone() {
-        return userPhone;
-    }
-
-    public void setUserPhone(Integer userPhone) {
-        this.userPhone = userPhone;
-    }
-
-    public String getUserMsg() {
-        return userMsg;
-    }
-
-    public void setUserMsg(String userMsg) {
-        this.userMsg = userMsg;
-    }
-
-    public Integer getEnable() {
-        return enable;
-    }
-
-    public void setEnable(Integer enable) {
-        this.enable = enable;
-    }
-
-    public Date getGmtCreate() {
-        return gmtCreate;
-    }
-
-    public void setGmtCreate(Date gmtCreate) {
-        this.gmtCreate = gmtCreate;
-    }
-
-    public Date getGmtModified() {
-        return gmtModified;
-    }
-
-    public void setGmtModified(Date gmtModified) {
-        this.gmtModified = gmtModified;
-    }
 }
