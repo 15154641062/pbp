@@ -1,4 +1,4 @@
-package com.lxl.pbpserver.config.security;
+package com.lxl.pbpserver.handler;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -9,6 +9,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.lxl.pbpserver.config.security.JwtAuthenticationToken;
 import com.lxl.pbpserver.service.JwtUserDetailsService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;

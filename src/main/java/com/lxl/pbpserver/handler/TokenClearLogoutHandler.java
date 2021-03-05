@@ -1,4 +1,4 @@
-package com.lxl.pbpserver.config.security;
+package com.lxl.pbpserver.handler;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

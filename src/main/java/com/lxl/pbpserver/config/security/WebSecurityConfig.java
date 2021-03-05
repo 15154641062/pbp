@@ -3,6 +3,9 @@ package com.lxl.pbpserver.config.security;
 import java.util.Arrays;
 
 import com.lxl.pbpserver.filter.OptionsRequestFilter;
+import com.lxl.pbpserver.handler.JsonLoginSuccessHandler;
+import com.lxl.pbpserver.handler.JwtRefreshSuccessHandler;
+import com.lxl.pbpserver.handler.TokenClearLogoutHandler;
 import com.lxl.pbpserver.service.JwtUserDetailsService;
 
 import org.springframework.context.annotation.Bean;
@@ -30,6 +33,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
 		        .antMatchers("/image/**").permitAll()	//静态资源访问无需认证
+//				.antMatchers("/druid/**").permitAll()	//允许未登录访问druid
 		        .antMatchers("/admin/**").hasAnyRole("ADMIN")		//admin开头的请求，需要admin角色权限
 		        .antMatchers("/article/**").hasRole("USER")		//需登陆才能访问的url
 		        .anyRequest().authenticated()		//默认其它的请求都需要认证

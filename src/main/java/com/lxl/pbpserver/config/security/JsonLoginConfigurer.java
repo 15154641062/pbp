@@ -1,5 +1,6 @@
 package com.lxl.pbpserver.config.security;
 
+import com.lxl.pbpserver.handler.HttpStatusLoginFailureHandler;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.HttpSecurityBuilder;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;

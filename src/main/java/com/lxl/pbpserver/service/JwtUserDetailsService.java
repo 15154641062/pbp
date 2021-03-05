@@ -51,6 +51,7 @@ public class JwtUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
         return User.builder().username("user").password(passwordEncoder.encode("123")).roles("USER").build();
     }
 
