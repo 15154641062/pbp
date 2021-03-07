@@ -1,9 +1,6 @@
 package com.lxl.pbpserver.pojo;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 
 import java.util.Date;
@@ -38,6 +35,7 @@ public class UserInfoDO {
     @TableField(value = "remark")
     private String remark;
 
+    @TableLogic
     @TableField(value = "is_deleted")
     private Integer deleted;
 
