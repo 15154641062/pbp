@@ -1,18 +1,16 @@
 package com.lxl.pbpserver.service;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.lxl.pbpserver.mapper.UserInfoMapper;
 import com.lxl.pbpserver.mapper.UserRoleMapper;
 import com.lxl.pbpserver.pojo.RoleDO;
 import com.lxl.pbpserver.pojo.UserInfoDO;
+import com.lxl.pbpserver.utils.TokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -24,6 +22,8 @@ import java.util.*;
 public class JwtUserDetailsService implements UserDetailsService {
 
     private PasswordEncoder passwordEncoder;
+    private static String refreshToken;
+
     @Autowired
     private UserRoleMapper userRoleMapper;
     @Autowired
@@ -54,19 +54,8 @@ public class JwtUserDetailsService implements UserDetailsService {
     }
 
     public String saveUserLoginInfo(UserDetails user) {
-        String salt = "123456ef"; //BCrypt.gensalt();  正式开发时可以调用该方法实时生成加密的salt
-        /**
-         * @todo 将salt保存到数据库或者缓存中
-         * redisTemplate.opsForValue().set("token:"+username, salt, 3600, TimeUnit.SECONDS);
-         */
-        //BCrypt.gensalt();
-        Algorithm algorithm = Algorithm.HMAC256(salt);
-        Date date = new Date(System.currentTimeMillis() + 3600 * 1000);  //设置1小时后过期
-        return JWT.create()
-                .withSubject(user.getUsername())
-                .withExpiresAt(date)
-                .withIssuedAt(new Date())
-                .sign(algorithm);
+        setRefreshToken(TokenUtil.generateToken(TokenUtil.REFRESH_TOKEN_GENERATE, user.getUsername()));      // 生成refreshToken
+        return TokenUtil.generateToken(TokenUtil.TOKEN_GENERATE, user.getUsername());                // 生成token
     }
 
     @Override
@@ -78,12 +67,12 @@ public class JwtUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("用户名不存在！");
         }
         // 从数据库取出用户信息
-        UserInfoDO userInfo =jwtUserDetailsService.userInfoMapper.selectOne(wrapper);
+        UserInfoDO userInfo = jwtUserDetailsService.userInfoMapper.selectOne(wrapper);
         // 从数据库取出该用户对应的角色信息
         List<RoleDO> roleList = jwtUserDetailsService.userRoleMapper.getRolesByUsername(username);
-        String[] roles= new String[roleList.size()];
-        for (int i=0;i<roleList.size();i++) {
-            roles[i]=roleList.get(i).getSign();
+        String[] roles = new String[roleList.size()];
+        for (int i = 0; i < roleList.size(); i++) {
+            roles[i] = roleList.get(i).getSign();
         }
         // 将角色的所有信息保存在创建出的UserDetails对象中
         return User.builder().username(userInfo.getLoginName()).password(passwordEncoder.encode(userInfo.getLoginPwd())).roles(roles).build();
@@ -100,5 +89,14 @@ public class JwtUserDetailsService implements UserDetailsService {
         /**
          * @todo 清除数据库或者缓存中登录salt
          */
+    }
+
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 }
