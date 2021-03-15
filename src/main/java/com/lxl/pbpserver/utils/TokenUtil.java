@@ -5,9 +5,16 @@ package com.lxl.pbpserver.utils;
  */
 
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.lxl.pbpserver.service.JwtUserDetailsService;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.web.authentication.www.NonceExpiredException;
 
+import java.util.Calendar;
 import java.util.Date;
 
 public class TokenUtil {
@@ -52,5 +59,31 @@ public class TokenUtil {
                 .withExpiresAt(expiresTime)
                 .withIssuedAt(new Date())
                 .sign(algorithm);
+    }
+
+    /**
+     * token校验
+     * @param token
+     * @param jwtUserDetailsService
+     */
+    public static String tokenAuthenticate(String token, JwtUserDetailsService jwtUserDetailsService){
+        DecodedJWT jwt = JWT.decode(token);          // 对token进行解密
+        if (jwt.getExpiresAt().before(Calendar.getInstance().getTime()))         // 判断token是否过期
+            throw new NonceExpiredException("Token expires");
+        String username = jwt.getSubject();
+        UserDetails user = jwtUserDetailsService.getUserLoginInfo(username);       // 校验该token的用户信息是否存在
+        if (user == null || user.getPassword() == null)
+            throw new NonceExpiredException("Token expires");
+        String encryptSalt = user.getPassword();        // 获取salt值
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(encryptSalt);
+            JWTVerifier verifier = JWT.require(algorithm)
+                    .withSubject(username)
+                    .build();
+            verifier.verify(jwt.getToken());           // 进行校验
+        } catch (Exception e) {
+            throw new BadCredentialsException("JWT token verify fail", e);
+        }
+        return username;
     }
 }
