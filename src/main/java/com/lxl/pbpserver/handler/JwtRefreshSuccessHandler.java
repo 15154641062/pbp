@@ -30,12 +30,12 @@ public class JwtRefreshSuccessHandler implements AuthenticationSuccessHandler{
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 			Authentication authentication) throws IOException, ServletException {
-		DecodedJWT jwt = ((JwtAuthenticationToken)authentication).getToken();
+		/*DecodedJWT jwt = ((JwtAuthenticationToken)authentication).getToken();
 		boolean shouldRefresh = shouldTokenRefresh(jwt.getIssuedAt());
 		if(shouldRefresh) {
             String newToken = jwtUserDetailsService.saveUserLoginInfo((UserDetails)authentication.getPrincipal());
             response.setHeader("Authorization", newToken);
-        }	
+        }	*/
 	}
 	
 	protected boolean shouldTokenRefresh(Date issueAt){

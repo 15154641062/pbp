@@ -1,6 +1,7 @@
 package com.lxl.pbpserver.controller;
 
 import com.alibaba.druid.util.StringUtils;
+import com.alibaba.fastjson.JSON;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -33,7 +34,7 @@ public class AuthenticateController {
      * @return
      */
     @PostMapping("/updateToken")
-    public BaseResponse<HashMap<String, String>> updateTokenByRefreshToken(String refreshToken) {
+    public String updateTokenByRefreshToken(String refreshToken) {
         HashMap<String, String> tokenMap = new HashMap<>();       // 存放生成的token
 
         String username = TokenUtil.tokenAuthenticate(refreshToken, jwtUserDetailsService);
@@ -41,8 +42,8 @@ public class AuthenticateController {
         if (!StringUtils.isEmpty(username)) {
             tokenMap.put("token", TokenUtil.generateToken(TokenUtil.TOKEN_GENERATE, username));
             tokenMap.put("refreshToken", TokenUtil.generateToken(TokenUtil.REFRESH_TOKEN_GENERATE, username));
-            return new BaseResponse(StatusCode.SUCCESS, "success", tokenMap);
+            return JSON.toJSONString(new BaseResponse(StatusCode.SUCCESS, "success", tokenMap));
         }
-        return new BaseResponse(StatusCode.FAIL, "校验失败！");
+        return JSON.toJSONString(new BaseResponse(StatusCode.FAIL, "校验失败！"));
     }
 }

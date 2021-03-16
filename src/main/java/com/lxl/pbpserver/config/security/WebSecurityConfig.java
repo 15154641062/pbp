@@ -37,6 +37,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 		        .antMatchers("/admin/**").hasAnyRole("ADMIN")		//admin开头的请求，需要admin角色权限
 		        .antMatchers("/article/**").hasRole("USER")		//需登陆才能访问的url
 		        .antMatchers("/test/**").permitAll()		//测试用,可不登录
+		        .antMatchers("/updateToken").permitAll()		//测试用,可不登录
 		        .anyRequest().authenticated()		//默认其它的请求都需要认证
 		        .and()
 		    .csrf().disable()		 //CSRF禁用，因为不使用session

@@ -22,7 +22,8 @@ public class TokenUtil {
     public static final int TOKEN_GENERATE = 0;
     public static final int REFRESH_TOKEN_GENERATE = 1;
 
-    private static final int TOKEN_EFFECT_SECONDS =1000 * 60 * 60 * 2;
+    //private static final int TOKEN_EFFECT_SECONDS =1000 * 60 * 60 * 2;
+    private static final int TOKEN_EFFECT_SECONDS =1000 * 25;
     private static final int REFRESH_TOKEN_EFFECT_SECONDS =1000 * 60 * 60 * 24 * 14;
 
     private static final Date TOKEN_EXPIRES_TIME = new Date(System.currentTimeMillis() + TOKEN_EFFECT_SECONDS);      // token过期时间 2小时
